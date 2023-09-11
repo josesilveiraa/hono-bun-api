@@ -25,10 +25,9 @@ class MembersController {
 
     if (!memberExists) throw new HTTPException(404, { message: 'Member not found.' });
 
-    const memberLink = await membersService.linkToUser(memberId, userId);
-    const userLink = await usersService.linkToMember(userId, memberId);
+    await membersService.linkToUser(memberId, userId);
 
-    return c.json({ memberLink, userLink });
+    return c.json({ ok: true });
   }
 }
 

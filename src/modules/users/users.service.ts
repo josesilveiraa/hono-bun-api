@@ -1,5 +1,6 @@
 import { User } from './users.model';
 import { Types } from 'mongoose';
+import { Member } from '../members/members.model';
 
 class UsersService {
   create(data: User) {
@@ -14,12 +15,25 @@ class UsersService {
     return User.findById(id);
   }
 
+  findOneByEmail(email: string) {
+    return User.findOne({ email });
+  }
+
+  update(id: string, data: Partial<User>) {
+    return User.findByIdAndUpdate(id, data, { new: true });
+  }
+
+  delete(id: string) {
+    return User.findByIdAndDelete(id);
+  }
+
   exists(id: string) {
     return User.exists({ _id: new Types.ObjectId(id) });
   }
 
-  linkToMember(userId: string, memberId: string) {
-    return User.findByIdAndUpdate(userId, { $push: { members: memberId } }, { new: true });
+  async linkToMember(userId: string, memberId: string) {
+    await Member.findByIdAndUpdate(memberId, { $push: { users: userId } });
+    await User.findByIdAndUpdate(userId, { $push: { members: memberId } });
   }
 }
 
