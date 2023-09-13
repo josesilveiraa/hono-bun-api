@@ -6,11 +6,48 @@ import usersService from '../users/users.service';
 
 class MembersController {
   async create(c: Context) {
-    const { name, email, users } = await c.req.json<Member>();
+    const { name, email, users, active } = await c.req.json<Member>();
 
-    const data = await membersService.create({ name, email, users });
+    const data = await membersService.create({ name, email, users, active });
 
     return c.json(data);
+  }
+
+  async findAll(c: Context) {
+    const members = await membersService.findAll();
+
+    return c.json(members);
+  }
+
+  async findOneById(c: Context) {
+    const { id } = c.req.param();
+
+    const member = await membersService.findOneById(id);
+
+    if (!member) throw new HTTPException(404, { message: 'Member not found.' });
+
+    return c.json(member);
+  }
+
+  async update(c: Context) {
+    const { id } = c.req.param();
+    const { name, email, users, active } = await c.req.json<Partial<Member>>();
+
+    const member = await membersService.update(id, { name, email, users, active });
+
+    if (!member) throw new HTTPException(404, { message: 'Member not found.' });
+
+    return c.json(member);
+  }
+
+  async delete(c: Context) {
+    const { id } = c.req.param();
+
+    const member = await membersService.delete(id);
+
+    if (!member) throw new HTTPException(404, { message: 'Member not found.' });
+
+    return c.json(member);
   }
 
   async linkToUser(c: Context) {

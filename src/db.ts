@@ -1,3 +1,4 @@
 import mongoose from 'mongoose';
 
-await mongoose.connect(Bun.env.MONGO_URI);
+// @ts-ignore
+await mongoose.connect(<string>Bun.env.MONGO_URI)
